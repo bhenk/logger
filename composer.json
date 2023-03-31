@@ -2,7 +2,7 @@
   "name": "bhenk/logger",
   "type": "library",
   "description": "Logging and testing facility",
-  "keywords": ["Logging", "Testing", "Monolog", "PHPUnit"],
+  "keywords": ["Logging", "Monolog", "PHPUnit"],
   "homepage": "https://github.com/bhenk/logger-d",
   "minimum-stability": "stable",
   "license": "Apache-2.0",
