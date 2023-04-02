@@ -89,7 +89,6 @@ trait ConsoleLoggerTrait {
      * Logger types are obtained from {@link LoggerFactory}. In this case the Logger obtained is equipped
      * with a {@link ConsoleHandler}.
      */
-    const CONSOLE_LOGGER = LoggerTypes::clt;
     private static ColorSchemeInterface $cs;
     private static ReflectionClass $reflectionClass;
     private static bool $class_on = true;
@@ -115,7 +114,7 @@ trait ConsoleLoggerTrait {
             self::$class_level = $args[1] ?? Level::Debug;
         }
         if (self::$class_on) {
-            $logger = LoggerFactory::getLogger(self::CONSOLE_LOGGER);
+            $logger = LoggerFactory::getLogger(LoggerTypes::clt);
             if (method_exists($logger, "getHandlers")) {
                 /** @var ConsoleHandler $handler */
                 $handler = $logger->getHandlers()[0];
@@ -145,6 +144,7 @@ trait ConsoleLoggerTrait {
      * @return void
      */
     public static function tearDownAfterClass(): void {
+        Log::setType(LoggerTypes::log);
         if (self::$class_on) {
             fwrite(STDOUT, self::$cs::RESET
                 . self::$cs::TRAIT_GOODBYE
@@ -159,7 +159,7 @@ trait ConsoleLoggerTrait {
      * Set up before an individual test method starts running.
      *
      * If {@link LogAttribute} on method level is absent or enabled, will print the name of the method to console.
-     * Sets the {@link ConsoleLoggerTrait::CONSOLE_LOGGER} as type on {@link bhenk\logger\log\Log}.
+     * Sets the {@link LoggerTypes::clt} as type on {@link bhenk\logger\log\Log}.
      * Will call on :tech:`parent::setUp()` after this.
      *
      * @throws ReflectionException
@@ -181,7 +181,7 @@ trait ConsoleLoggerTrait {
                 $this->method_level = $args[1] ?? Level::Debug;
             }
             if ($this->method_on) {
-                $this->previous_type = Log::setType(self::CONSOLE_LOGGER);
+                $this->previous_type = Log::setType(LoggerTypes::clt);
                 Log::setLevel($this->method_level);
                 fwrite(STDOUT, self::$cs::RESET . PHP_EOL
                     . self::$cs::TRAIT_METHOD
@@ -201,9 +201,7 @@ trait ConsoleLoggerTrait {
      * @return void
      */
     public function tearDown(): void {
-        if (self::$class_on and $this->method_on) {
-            Log::setType($this->previous_type);
-        }
+        Log::setType(LoggerTypes::log);
         parent::tearDown();
     }
 }
