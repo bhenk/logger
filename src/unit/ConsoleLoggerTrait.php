@@ -95,7 +95,6 @@ trait ConsoleLoggerTrait {
     private static Level $class_level = Level::Debug;
     private bool $method_on = true;
     private Level $method_level = Level::Debug;
-    private LoggerTypes $previous_type;
 
     /**
      * Sets up before the {@link PHPUnit\Framework\TestCase} starts running.
@@ -181,7 +180,7 @@ trait ConsoleLoggerTrait {
                 $this->method_level = $args[1] ?? Level::Debug;
             }
             if ($this->method_on) {
-                $this->previous_type = Log::setType(LoggerTypes::clt);
+                Log::setType(LoggerTypes::clt);
                 Log::setLevel($this->method_level);
                 fwrite(STDOUT, self::$cs::RESET . PHP_EOL
                     . self::$cs::TRAIT_METHOD
