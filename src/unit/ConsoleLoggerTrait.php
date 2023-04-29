@@ -9,11 +9,9 @@ use bhenk\logger\handle\ColorSchemeInterface;
 use bhenk\logger\handle\ConsoleHandler;
 use bhenk\logger\log\Log;
 use Monolog\Level;
-use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use function fwrite;
 use function method_exists;
 use function str_pad;
@@ -72,6 +70,27 @@ use function str_pad;
  * The setting of the level parameter of :ref:`bhenk\logger\unit\LogAttribute` on individual
  * methods has precedence over that set
  * on class level.
+ *
+ * If you override one of the
+ * `PHPUnit fixtures <https://docs.phpunit.de/en/10.0/fixtures.html#fixtures>`_ make sure to call the
+ * corresponding trait-method:
+ *
+ * .. code-block::
+ *    :emphasize-lines: 4, 10
+ *
+ *    #[LogAttribute(true)]
+ *    class ResourceTest extends TestCase {
+ *        use ConsoleLoggerTrait {
+ *            setUp as public traitSetUp;
+ *        }
+ *
+ *        private Resource $resource;
+ *
+ *        public function setUp(): void {
+ *            $this->traitSetUp();
+ *            $this->resource = new Resource();
+ *        }
+ *
  *
  * This trait calls on :ref:`bhenk\logger\log\Log` to set the type of logger temporarily to
  * {@link LoggerTypes::clt}.
@@ -165,9 +184,9 @@ trait ConsoleLoggerTrait {
      */
     public function setUp(): void {
         if (self::$class_on) {
-            if (method_exists(TestCase::class, "name")) {
+            if (method_exists(PHPUnit\Framework\TestCase::class, "name")) {
                 $methodName = parent::name();
-            } elseif (method_exists(TestCase::class, "getName")) {
+            } elseif (method_exists(PHPUnit\Framework\TestCase::class, "getName")) {
                 $methodName = parent::getName();
             } else {
                 $methodName = $this->name();
